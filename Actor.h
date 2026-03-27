@@ -10,7 +10,7 @@ public:
 	virtual void Render();
 
 	void SetActorLocation(int NewX, int NewY);
-
+	const int GetZOrder() { return ZOrder; };
 protected:
 	int X;
 	int Y;

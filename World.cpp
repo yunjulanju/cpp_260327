@@ -7,6 +7,9 @@
 #include "Monster.h"
 #include "Goal.h"
 #include "Floor.h"
+#include "Actor.h"
+#include <algorithm>
+#include "Engine.h"
 
 using namespace std;
 
@@ -34,10 +37,13 @@ void UWorld::Tick()
 
 void UWorld::Render()
 {
+	//그리기 전 지운다
+	GEngine->Clear();
 	for (auto Actor : Actors)
 	{
 		Actor->Render();
 	}
+	GEngine->Flip();
 }
 
 void UWorld::Load(std::string MapName)
@@ -52,18 +58,22 @@ void UWorld::Load(std::string MapName)
 				if (line[x] == '*')
 				{
 					SpawnActor<AWall>()->SetActorLocation(x,y);
+					SpawnActor<AFloor>()->SetActorLocation(x, y);
 				}
 				else if (line[x] == 'P')
 				{
 					SpawnActor<APlayer>()->SetActorLocation(x, y);
+					SpawnActor<AFloor>()->SetActorLocation(x, y);
 				}
 				else if (line[x] == 'M')
 				{
 					SpawnActor<AMonster>()->SetActorLocation(x, y);
+					SpawnActor<AFloor>()->SetActorLocation(x, y);
 				}
 				else if (line[x] == 'G')
 				{
 					SpawnActor<AGoal>()->SetActorLocation(x, y);
+					SpawnActor<AFloor>()->SetActorLocation(x, y);
 				}
 				else if (line[x] == ' ')
 				{
@@ -74,8 +84,22 @@ void UWorld::Load(std::string MapName)
 		}
 		file.close();
 	}
-	else
+	//Sort()를 알고리즘에 있는 함수로 쓴다면
+	sort(Actors.begin(), Actors.end(), [](AActor* First, AActor* Second) -> int {return (First->GetZOrder() < Second->GetZOrder() ? 1 : 0); });
+}
+
+void UWorld::Sort()
+{
+	for (int FirstIndex = 0; FirstIndex < Actors.size(); FirstIndex++)
 	{
-		std::cout << "Failed File load";
+		for (int SecondIndex = 1; SecondIndex < Actors.size(); SecondIndex++)
+		{
+			if (Actors[FirstIndex]->GetZOrder() < Actors[SecondIndex]->GetZOrder())
+			{
+				auto Temp = Actors[FirstIndex];
+				Actors[FirstIndex] = Actors[SecondIndex];
+				Actors[SecondIndex] = Temp;
+			}
+		}
 	}
 }

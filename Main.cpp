@@ -27,16 +27,10 @@ void Selection(int* data, int Insize)
 
 int main()
 {
-	//GEngine->GetInstance();
-	//GEngine->GetWorld()->Load("Map.txt");
-	//GEngine->Run();
+	GEngine->GetInstance();
+	GEngine->GetWorld()->Load("Map.txt");
+	GEngine->Run();
 
-	int Data[10] = { 9,1,3,5,4,6,8,7,2,10 };
-	Selection(Data, 10);
-	for (auto data : Data)
-	{
-		cout << data << " ";
-	}
 
 	return 0;
 }
