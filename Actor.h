@@ -14,6 +14,7 @@ public:
 protected:
 	int X;
 	int Y;
+	int ZOrder = 0;
 	char Mesh;
 };
 
