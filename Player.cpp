@@ -7,6 +7,10 @@ APlayer::APlayer(int InX, int InY, char InMesh)
 	Y = InY;
 	Mesh = InMesh;
 	ZOrder = 10;
+
+	R = 0;
+	G = 0;
+	B = 255;
 }
 
 APlayer::~APlayer()
@@ -15,21 +19,34 @@ APlayer::~APlayer()
 
 void APlayer::Tick()
 {
-	if (UEngine::KeyCode == 'w')
+	__super::Tick();
+
+	SDL_Event Event = GEngine->GetEvent();
+
+	if (Event.type == SDL_KEYDOWN)
 	{
-		Y--;
+		SDL_Keycode KeyCode = Event.key.keysym.sym;
+		if (KeyCode == SDLK_w)
+		{
+			Y--;
+			//callback ~할때 ~하는 함수
+		}
+		if (KeyCode == SDLK_s)
+		{
+			Y++;
+		}
+		if (KeyCode == SDLK_a)
+		{
+			X--;
+		}
+		if (KeyCode == SDLK_d)
+		{
+			X++;
+		}
+		if (KeyCode == SDLK_SPACE)
+		{
+			GEngine->Stop();
+		}
 	}
-	if (UEngine::KeyCode == 's')
-	{
-		Y++;
-	}
-	if (UEngine::KeyCode == 'a')
-	{
-		X--;
-	}
-	if (UEngine::KeyCode == 'd')
-	{
-		X++;
-	}
-	UEngine::KeyCode = 0;
+	
 }

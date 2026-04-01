@@ -7,6 +7,10 @@ AActor::AActor(int InX, int InY, char InMesh)
 	X = InX;
 	Y = InY;
 	Mesh = InMesh;
+
+	R = 0;
+	G = 0;
+	B = 0;
 }
 
 AActor::~AActor()
@@ -32,6 +36,7 @@ void AActor::Render()
 	std::cout << Mesh;*/
 
 	GEngine->Draw(X,Y,Mesh);
+	GEngine->Draw(X, Y, R,G,B, 255);
 }
 
 void AActor::SetActorLocation(int NewX, int NewY)
