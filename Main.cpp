@@ -2,6 +2,8 @@
 #include "Engine.h"
 #include "World.h"
 
+#include "SDL.h"
+
 using namespace std;
 
 void Selection(int* data, int Insize)
