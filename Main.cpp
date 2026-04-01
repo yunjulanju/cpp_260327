@@ -4,35 +4,22 @@
 
 #include "SDL.h"
 
+#pragma comment(lib, "SDL2")
+#pragma comment(lib,"SDL2main")
+
 using namespace std;
 
-void Selection(int* data, int Insize)
+int SDL_main(int argc, char* argv[])
 {
-	for (int i = 0; i < Insize -1 ; i++)
-	{		
-		int MinNum = i;
-		for (int j = i+1; j < Insize; j++)
-		{
-			if (data[MinNum] > data[j])
-			{
-				MinNum = j;
-			}
-		}
-		if (data[i] > data[MinNum])
-		{
-			int temp = data[i];
-			data[i] = data[MinNum];
-			data[MinNum] = temp;
-		}
-	}
-}
-
-int main()
-{
-	GEngine->GetInstance();
-	GEngine->GetWorld()->Load("Map.txt");
-	GEngine->Run();
-
-
 	return 0;
 }
+
+//int main()
+//{
+//	GEngine->GetInstance();
+//	GEngine->GetWorld()->Load("Map.txt");
+//	GEngine->Run();
+//
+//
+//	return 0;
+//}
