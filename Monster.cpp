@@ -1,6 +1,7 @@
 #include "Monster.h"
 #include "Engine.h"
 #include <random>
+#include "ResourceManager.h"
 
 AMonster::AMonster(int InX, int InY, char InMesh)
 {
@@ -13,7 +14,9 @@ AMonster::AMonster(int InX, int InY, char InMesh)
 	G = 0;
 	B = 0;
 
-	Load("Data/monster.bmp");
+	Resource TempResource = GEngine->GetResourceManager()->LoadTexture("Data/monster.bmp",true, 255,255,255);
+	Image = TempResource.Image;
+	Texture = TempResource.Texture;
 }
 
 AMonster::~AMonster()

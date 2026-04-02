@@ -16,7 +16,6 @@ public:
 
 	void SetActorLocation(int NewX, int NewY);
 	const int GetZOrder() { return ZOrder; };
-	virtual void Load(std::string Filename);
 protected:
 	int X;
 	int Y;
@@ -28,7 +27,10 @@ protected:
 	int ZOrder = 0;
 	char Mesh;
 
-	SDL_Surface* Image;
-	SDL_Texture* Texture;
+	SDL_Surface* Image = 0;
+	SDL_Texture* Texture = 0;
+
+	int AnimX = 0;
+	int AnimY = 0;
 };
 

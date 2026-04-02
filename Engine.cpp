@@ -2,6 +2,7 @@
 #include "World.h"
 #include <conio.h>
 #include <SDL.h>
+#include "ResourceManager.h"
 
 UEngine* UEngine::Instance = nullptr;
 int UEngine::KeyCode = 0;
@@ -23,7 +24,7 @@ void UEngine::Init()
 	MyWindow = SDL_CreateWindow("Hello", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
 	MyRenderer = SDL_CreateRenderer(MyWindow, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 
-
+	ResourceManager = new UResourceManager();
 	bIsRunning = true;
 	World = new UWorld();
 	InitBuffer();
@@ -38,6 +39,8 @@ void UEngine::Term()
 	delete World;
 	TermBuffer();
 	World = nullptr;
+
+	delete ResourceManager;
 }
 
 void UEngine::Run()

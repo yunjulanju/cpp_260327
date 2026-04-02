@@ -6,6 +6,7 @@
 
 class AActor;
 class UWorld;
+class UResourceManager;
 
 struct SDL_Window;
 struct SDL_Renderer;
@@ -73,6 +74,10 @@ public:
 		return DeltaSeconds;
 	}
 
+	inline UResourceManager* GetResourceManager() const
+	{
+		return ResourceManager;
+	}
 
 protected:
 	void Input();
@@ -87,6 +92,8 @@ protected:
 	SDL_Renderer* MyRenderer;
 	SDL_Event MyEvent;
 	float DeltaSeconds;
+
+	UResourceManager* ResourceManager;
 };
 
 #define GEngine			UEngine::GetInstance()
