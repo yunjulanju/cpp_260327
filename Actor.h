@@ -3,7 +3,11 @@
 
 struct SDL_Surface;
 struct SDL_Texture;
-
+struct FPosition
+{
+	int X;
+	int Y;
+};
 class AActor
 {
 public:
@@ -16,6 +20,10 @@ public:
 
 	void SetActorLocation(int NewX, int NewY);
 	const int GetZOrder() { return ZOrder; };
+	inline FPosition GetPosition() const
+	{
+		return { X, Y };
+	}
 protected:
 	int X;
 	int Y;
