@@ -26,10 +26,39 @@ std::mt19937 rng(RandomDevice());
 
 void AMonster::Tick()
 {
-	std::uniform_int_distribution<int> randomX(0, 10);
+	std::uniform_int_distribution<int> RandDirection(0, 5);
 	
+	if (CurrentTime < 0.2)
+	{
+		CurrentTime += GEngine->GetDeltaSeconds();
+	}
+	else
+	{
+		int Direction = RandDirection(RandomGenerator);
+		if (Direction == 0)
+		{
+			Y--;
+		}
+		if (Direction == 1)
+		{
+			Y++;
 
+		}
+		if (Direction == 2)
+		{
+			X--;
 
-	X = randomX(rng) * 30;
-	GEngine->GetDeltaSeconds()
+		}
+		if (Direction == 3)
+		{
+			X++;
+
+		}
+		if (Direction == 4)
+		{
+			
+		}
+		CurrentTime = 0;
+	}
+
 }

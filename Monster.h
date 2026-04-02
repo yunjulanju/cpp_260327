@@ -9,5 +9,10 @@ public:
 
 	virtual void Tick() override;
 
+private:
+	int AnimX = 0;
+	int AnimY = 0;
+	float CurrentTime = 0;
+
 };
 

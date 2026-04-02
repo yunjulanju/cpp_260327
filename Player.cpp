@@ -66,7 +66,6 @@ void APlayer::Tick()
 		CurrentTime = 0;
 	}
 	
-	
 }
 
 void APlayer::Load(std::string Filename)
