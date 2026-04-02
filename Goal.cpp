@@ -10,6 +10,8 @@ AGoal::AGoal(int InX, int InY, char InMesh)
 	R = 255;
 	G = 255;
 	B = 0;
+
+	Load("Data/goal.bmp");
 }
 
 AGoal::~AGoal()

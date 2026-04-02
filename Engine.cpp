@@ -21,7 +21,8 @@ void UEngine::Init()
 	SDL_Init(SDL_INIT_EVERYTHING);
 
 	MyWindow = SDL_CreateWindow("Hello", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
-	MyRender = SDL_CreateRenderer(MyWindow, -1, 0);
+	MyRenderer = SDL_CreateRenderer(MyWindow, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+
 
 	bIsRunning = true;
 	World = new UWorld();
@@ -30,7 +31,7 @@ void UEngine::Init()
 
 void UEngine::Term()
 {
-	SDL_DestroyRenderer(MyRender);
+	SDL_DestroyRenderer(MyRenderer);
 	SDL_DestroyWindow(MyWindow);
 	SDL_Quit();
 
@@ -41,13 +42,18 @@ void UEngine::Term()
 
 void UEngine::Run()
 {
+	Uint64 LastTime;
+	
 	while (bIsRunning)
 	{
+		LastTime = SDL_GetTicks64();
 		SDL_PollEvent(&MyEvent);
 
 		Input();
 		Tick();
 		Render();
+
+		DeltaSeconds = (float)(SDL_GetTicks64() - LastTime)/1000.0f;
 	}
 }
 
@@ -70,6 +76,9 @@ void UEngine::InitBuffer()
 
 void UEngine::Clear()
 {
+	SDL_SetRenderDrawColor(MyRenderer, 255, 255, 255, 255);
+	SDL_RenderClear(MyRenderer);
+
 	DWORD DW;
 	FillConsoleOutputCharacter(ScreenBufferHandle[ActiveScreenBufferIndex], ' ', 80*25, COORD{0,0}, &DW);
 }
@@ -84,22 +93,30 @@ void UEngine::Draw(int InX, int InY, char InMesh)
 
 void UEngine::Draw(int InX, int InY, int R, int G, int B, int A)
 {
-	SDL_SetRenderDrawColor(MyRender, R, G, B, A);
+	//SDL_SetRenderDrawColor(MyRenderer, R, G, B, A);
 	//SDL_RenderDrawPoint(MyRender, InX, InY);
 	SDL_Rect MyRect = { InX * 30,InY * 30 , 30,30};
-	SDL_RenderFillRect(MyRender, &MyRect);
+	SDL_RenderFillRect(MyRenderer, &MyRect);
+}
+
+void UEngine::Draw(int InX, int InY, SDL_Texture* InTexture)
+{
+	int TileSize = 30;
+
+	SDL_Rect MyRect = { InX * TileSize, InY * TileSize, TileSize,TileSize };
+	SDL_RenderCopy(MyRenderer, InTexture, nullptr, &MyRect);
 }
 
 void UEngine::Flip()
 {
-	SetConsoleActiveScreenBuffer(ScreenBufferHandle[ActiveScreenBufferIndex]);
-	ActiveScreenBufferIndex = 1 - ActiveScreenBufferIndex;
+	/*SetConsoleActiveScreenBuffer(ScreenBufferHandle[ActiveScreenBufferIndex]);
+	ActiveScreenBufferIndex = 1 - ActiveScreenBufferIndex;*/
 }
 
 void UEngine::TermBuffer()
 {
-	CloseHandle(ScreenBufferHandle[0]);
-	CloseHandle(ScreenBufferHandle[1]);
+	/*CloseHandle(ScreenBufferHandle[0]);
+	CloseHandle(ScreenBufferHandle[1]);*/
 }
 
 void UEngine::Input()
@@ -122,10 +139,7 @@ void UEngine::Tick()
 
 void UEngine::Render()
 {
-	SDL_SetRenderDrawColor(MyRender, 255, 255, 255, 255);
-	SDL_RenderClear(MyRender);
-	
 	World->Render();
 
-	SDL_RenderPresent(MyRender);
+	SDL_RenderPresent(MyRenderer);
 }

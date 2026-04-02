@@ -50,6 +50,10 @@ void UWorld::Load(std::string MapName)
 {
 	string line;
 	int y = 0;
+
+	int MaxX = -1;
+	int MaxY = -1;
+
 	ifstream file(MapName); // example.txt 파일을 연다. 없으면 생성. 
 	if (file.is_open()) {
 		while (getline(file, line)) {
@@ -79,11 +83,21 @@ void UWorld::Load(std::string MapName)
 				{
 					SpawnActor<AFloor>()->SetActorLocation(x, y);
 				}
+				if (x > MaxX)
+				{
+					MaxX = x;
+				}
 			}
 			y++;
 		}
 		file.close();
 	}
+
+	MaxY = y;
+
+	SDL_SetWindowSize(GEngine->GetWindow(), (MaxX+1) * 30, MaxY * 30);
+	
+
 	//Sort()를 알고리즘에 있는 함수로 쓴다면
 	sort(Actors.begin(), Actors.end(), [](AActor* First, AActor* Second) -> int {return (First->GetZOrder() < Second->GetZOrder() ? 1 : 0); });
 }

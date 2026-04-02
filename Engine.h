@@ -49,13 +49,30 @@ public:
 	void Clear();
 	void Draw(int InX, int InY, char InMesh);
 	void Draw(int InX, int InY, int R, int G, int B, int A);
+	void Draw(int InX, int InY, SDL_Texture* InTexture);
 	void Flip();
 	void TermBuffer();
+
+	inline SDL_Window* GetWindow() const
+	{
+		return MyWindow;
+	}
 
 	inline const SDL_Event& GetEvent()
 	{
 		return MyEvent;
 	}
+
+	inline SDL_Renderer* GetRenderer() const
+	{
+		return MyRenderer;
+	}
+
+	inline float GetDeltaSeconds() const
+	{
+		return DeltaSeconds;
+	}
+
 
 protected:
 	void Input();
@@ -67,8 +84,9 @@ protected:
 	int bIsRunning : 1;
 
 	SDL_Window* MyWindow;
-	SDL_Renderer* MyRender;
+	SDL_Renderer* MyRenderer;
 	SDL_Event MyEvent;
+	float DeltaSeconds;
 };
 
 #define GEngine			UEngine::GetInstance()
