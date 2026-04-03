@@ -3,12 +3,15 @@
 #include <string>
 
 class AActor;
+class AGameMode;
 
 class UWorld
 {
 public:
 	UWorld();
 	virtual ~UWorld();
+
+	void SetGameMode(AGameMode* NewGameMode);
 
 	template <typename T>
 	AActor* SpawnActor()
@@ -19,11 +22,26 @@ public:
 		return NewActor;
 	}
 
+	template<typename T>
+	AActor* GetActorOfClass()
+	{
+		for (auto Actor : Actors)
+		{
+			T* Target = dynamic_cast<T*>(Actor);
+			if (Target)
+			{
+				return Target;
+			}
+		}
+		return nullptr;
+	}
+
 	inline std::vector<class AActor*>& GetActors()
 	{
 		return Actors;
 	}
 
+	void BeginPlay();
 	void Tick();
 	void Render();
 	void Load(std::string MapName);

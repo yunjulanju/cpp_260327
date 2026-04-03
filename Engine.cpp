@@ -5,7 +5,6 @@
 #include "ResourceManager.h"
 
 UEngine* UEngine::Instance = nullptr;
-int UEngine::KeyCode = 0;
 
 UEngine::UEngine()
 {
@@ -45,8 +44,9 @@ void UEngine::Term()
 
 void UEngine::Run()
 {
+	World->BeginPlay();
+
 	Uint64 LastTime;
-	
 	while (bIsRunning)
 	{
 		LastTime = SDL_GetTicks64();
@@ -62,19 +62,20 @@ void UEngine::Run()
 
 void UEngine::Stop()
 {
+	bIsRunning = false;
 }
 
 void UEngine::InitBuffer()
 {
-	ScreenBufferHandle[0] = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
-	ScreenBufferHandle[1]=CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
-	//메모리 어딘가에 화면 저장하는 공간 만들기
+	//ScreenBufferHandle[0] = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+	//ScreenBufferHandle[1]=CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+	////메모리 어딘가에 화면 저장하는 공간 만들기
 
-	CONSOLE_CURSOR_INFO ConsoleCursorInfo;
-	ConsoleCursorInfo.dwSize = 1;
-	ConsoleCursorInfo.bVisible = FALSE;
-	SetConsoleCursorInfo(ScreenBufferHandle[0], &ConsoleCursorInfo);
-	SetConsoleCursorInfo(ScreenBufferHandle[1], &ConsoleCursorInfo);
+	//CONSOLE_CURSOR_INFO ConsoleCursorInfo;
+	//ConsoleCursorInfo.dwSize = 1;
+	//ConsoleCursorInfo.bVisible = FALSE;
+	//SetConsoleCursorInfo(ScreenBufferHandle[0], &ConsoleCursorInfo);
+	//SetConsoleCursorInfo(ScreenBufferHandle[1], &ConsoleCursorInfo);
 }
 
 void UEngine::Clear()
@@ -82,24 +83,8 @@ void UEngine::Clear()
 	SDL_SetRenderDrawColor(MyRenderer, 255, 255, 255, 255);
 	SDL_RenderClear(MyRenderer);
 
-	DWORD DW;
-	FillConsoleOutputCharacter(ScreenBufferHandle[ActiveScreenBufferIndex], ' ', 80*25, COORD{0,0}, &DW);
-}
-
-void UEngine::Draw(int InX, int InY, char InMesh)
-{
-	char MeshString[2] = { 0, };
-	MeshString[0] = InMesh;
-	SetConsoleCursorPosition(ScreenBufferHandle[ActiveScreenBufferIndex], COORD{ (short)InX, (short)InY });
-	WriteFile(ScreenBufferHandle[ActiveScreenBufferIndex], MeshString, 1, NULL, NULL);
-}
-
-void UEngine::Draw(int InX, int InY, int R, int G, int B, int A)
-{
-	//SDL_SetRenderDrawColor(MyRenderer, R, G, B, A);
-	//SDL_RenderDrawPoint(MyRender, InX, InY);
-	SDL_Rect MyRect = { InX * 30,InY * 30 , 30,30};
-	SDL_RenderFillRect(MyRenderer, &MyRect);
+	/*DWORD DW;
+	FillConsoleOutputCharacter(ScreenBufferHandle[ActiveScreenBufferIndex], ' ', 80*25, COORD{0,0}, &DW);*/
 }
 
 void UEngine::Draw(int InX, int InY, SDL_Texture* InTexture)

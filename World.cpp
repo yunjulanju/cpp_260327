@@ -10,6 +10,8 @@
 #include "Actor.h"
 #include <algorithm>
 #include "Engine.h"
+#include "SpriteComponent.h"
+#include "GameMode.h"
 
 using namespace std;
 
@@ -26,6 +28,19 @@ UWorld::~UWorld()
 	Actors.clear();
 }
 
+void UWorld::SetGameMode(AGameMode* NewGameMode)
+{
+	Actors.push_back(NewGameMode);
+}
+
+void UWorld::BeginPlay()
+{
+	for (auto Actor : Actors)
+	{
+		Actor->BeginPlay();
+	}
+}
+
 void UWorld::Tick()
 {
 	for (auto Actor : Actors)
@@ -34,20 +49,31 @@ void UWorld::Tick()
 	}
 }
 
-
 void UWorld::Render()
 {
-	//그리기 전 지운다
 	GEngine->Clear();
+
+	//모든 액터중에서 Render가능한 컴포넌트가 있으면 렌더 하세요.
 	for (auto Actor : Actors)
 	{
-		Actor->Render();
+		//가진 컴포넌트중에 SpriteRenderComponent가 있냐 물어보는거임?
+		for (auto Component : Actor->Components)
+		{
+			USpriteComponent* RenderComponent = dynamic_cast<USpriteComponent*>(Component);
+			if (RenderComponent)
+			{
+				RenderComponent->Render();
+			}
+		}
 	}
+
 	GEngine->Flip();
 }
 
 void UWorld::Load(std::string MapName)
 {
+	Actors.push_back(new AGameMode());
+
 	string line;
 	int y = 0;
 
@@ -99,21 +125,50 @@ void UWorld::Load(std::string MapName)
 	
 
 	//Sort()를 알고리즘에 있는 함수로 쓴다면
-	sort(Actors.begin(), Actors.end(), [](AActor* First, AActor* Second) -> int {return (First->GetZOrder() < Second->GetZOrder() ? 1 : 0); });
+	std::sort(Actors.begin(), Actors.end(),
+		[](AActor* First, AActor* Second) -> int {
+
+			USpriteComponent* FirstRenderComponet = nullptr;
+			for (auto Component : First->Components)
+			{
+				FirstRenderComponet = dynamic_cast<USpriteComponent*>(Component);
+				if (FirstRenderComponet)
+				{
+					break;
+				}
+			}
+
+			USpriteComponent* SecondRenderComponet = nullptr;
+			for (auto Component : Second->Components)
+			{
+				SecondRenderComponet = dynamic_cast<USpriteComponent*>(Component);
+				if (SecondRenderComponet)
+				{
+					break;
+				}
+			}
+			if (!FirstRenderComponet || !SecondRenderComponet)
+			{
+				return false;
+			}
+
+			return (FirstRenderComponet->ZOrder < SecondRenderComponet->ZOrder ? 1 : 0);
+		}
+	);
 }
 
 void UWorld::Sort()
 {
-	for (int FirstIndex = 0; FirstIndex < Actors.size(); FirstIndex++)
-	{
-		for (int SecondIndex = 1; SecondIndex < Actors.size(); SecondIndex++)
-		{
-			if (Actors[FirstIndex]->GetZOrder() < Actors[SecondIndex]->GetZOrder())
-			{
-				auto Temp = Actors[FirstIndex];
-				Actors[FirstIndex] = Actors[SecondIndex];
-				Actors[SecondIndex] = Temp;
-			}
-		}
-	}
+	//for (int FirstIndex = 0; FirstIndex < Actors.size(); FirstIndex++)
+	//{
+	//	for (int SecondIndex = 1; SecondIndex < Actors.size(); SecondIndex++)
+	//	{
+	//		if (Actors[FirstIndex]->GetZOrder() < Actors[SecondIndex]->GetZOrder())
+	//		{
+	//			auto Temp = Actors[FirstIndex];
+	//			Actors[FirstIndex] = Actors[SecondIndex];
+	//			Actors[SecondIndex] = Temp;
+	//		}
+	//	}
+	//}
 }

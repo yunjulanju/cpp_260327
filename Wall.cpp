@@ -1,22 +1,26 @@
 #include "Wall.h"
 #include "Engine.h"
 #include "ResourceManager.h"
+#include "SpriteComponent.h"
+#include "CollisionComponent.h"
 
 AWall::AWall(int InX, int InY, char InMesh)
 {
 	X = InX;
 	Y = InY;
-	Mesh = InMesh;
-	ZOrder = 1;
 
-	R = 0;
-	G =255;
-	B = 0;
+	SpriteComponent = CreateDefaultSubobject<USpriteComponent>("Sprite");
 
 	Resource TempResource = GEngine->GetResourceManager()->LoadTexture("Data/wall.bmp");
-	Image = TempResource.Image;
-	Texture = TempResource.Texture;
+	SpriteComponent->Image = TempResource.Image;
+	SpriteComponent->Texture = TempResource.Texture;
+	SpriteComponent->ZOrder = 2;
+
+	CollisionComponent = CreateDefaultSubobject<UCollisionComponent>("Collision");
+	CollisionComponent->bIsGenerateOverlap = true;
+	CollisionComponent->bIsGenerateHit = true;
 }
+
 
 AWall::~AWall()
 {

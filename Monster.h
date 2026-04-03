@@ -1,7 +1,10 @@
 #pragma once
-#include "Actor.h"
+#include "Character.h"
 
-class AMonster : public AActor
+class USpriteComponent;
+class UCollisionComponent;
+
+class AMonster : public ACharacter
 {
 public:
 	AMonster(int InX = 0, int InY = 0, char InMesh = 'M');
@@ -9,10 +12,14 @@ public:
 
 	virtual void Tick() override;
 
-private:
-	int AnimX = 0;
-	int AnimY = 0;
-	float CurrentTime = 0;
+	USpriteComponent* SpriteComponent;
+	UCollisionComponent* CollisionComponent;
 
+protected:
+	float ElapsedTime = 0;
+	float ExecutionTime = 0.1f;
+
+private:
+	float CurrentTime = 0.0f;
 };
 

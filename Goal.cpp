@@ -1,21 +1,25 @@
 #include "Goal.h"
 #include "Engine.h"
 #include "ResourceManager.h"
+#include "SpriteComponent.h"
+#include "CollisionComponent.h"
 
 AGoal::AGoal(int InX, int InY, char InMesh)
 {
 	X = InX;
 	Y = InY;
-	Mesh = InMesh;
-	ZOrder = 2;
 
-	R = 255;
-	G = 255;
-	B = 0;
+	SpriteComponent = CreateDefaultSubobject<USpriteComponent>("Sprite");
 
-	Resource TempResource = GEngine->GetResourceManager()->LoadTexture("Data/goal.bmp", true, 255,255,255);
-	Image = TempResource.Image;
-	Texture = TempResource.Texture;
+	Resource TempResource = GEngine->GetResourceManager()->LoadTexture("Data/goal.bmp", true, 255, 255, 255);
+
+	SpriteComponent->Image = TempResource.Image;
+	SpriteComponent->Texture = TempResource.Texture;
+	SpriteComponent->ZOrder = 5;
+
+	CollisionComponent = CreateDefaultSubobject<UCollisionComponent>("Collision");
+	CollisionComponent->bIsGenerateHit = false;
+	CollisionComponent->bIsGenerateOverlap = true;
 }
 
 AGoal::~AGoal()

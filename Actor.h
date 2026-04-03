@@ -1,13 +1,14 @@
 #pragma once
 #include <string>
+#include <vector>
+#include <functional>
+
+//#define FActorGeginOverlapSignature std::function<void(class AActor*)>
+using FActorBeginOverlapSignature = std::function<void(class AActor* OtherActor)>;
 
 struct SDL_Surface;
 struct SDL_Texture;
-struct FPosition
-{
-	int X;
-	int Y;
-};
+class UComponent;
 class AActor
 {
 public:
@@ -16,29 +17,45 @@ public:
 
 	virtual void BeginPlay();
 	virtual void Tick();
-	virtual void Render();
 
 	void SetActorLocation(int NewX, int NewY);
-	const int GetZOrder() { return ZOrder; };
-	inline FPosition GetPosition() const
+
+	std::vector<UComponent*> Components;
+
+	inline int GetX() const
 	{
-		return { X, Y };
+		return X;
 	}
+
+	inline int GetY()const
+	{
+		return Y;
+	}
+
+	FActorBeginOverlapSignature OnActorBeginOverlap;
+
+	virtual void ReceiveHit(class AActor* Other);
+
+	class UWorld* GetWorld();
+
+	void SetWorld(class UWorld* InWorld)
+	{
+		World = InWorld;
+	}
+
 protected:
 	int X;
 	int Y;
-	
-	int R;
-	int G;
-	int B;
 
-	int ZOrder = 0;
-	char Mesh;
+	template<typename T>
+	T* CreateDefaultSubobject(std::string ComponentName)
+	{
+		T* Temp = new T;
+		Temp->Owner = this;
+		Components.push_back(Temp);
 
-	SDL_Surface* Image = 0;
-	SDL_Texture* Texture = 0;
-
-	int AnimX = 0;
-	int AnimY = 0;
+		return Temp;
+	}
+	class UWorld* World;
 };
 

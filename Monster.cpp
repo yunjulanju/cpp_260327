@@ -2,21 +2,25 @@
 #include "Engine.h"
 #include <random>
 #include "ResourceManager.h"
+#include "SpriteComponent.h"
+#include "CollisionComponent.h"
+#include "World.h"
 
 AMonster::AMonster(int InX, int InY, char InMesh)
 {
 	X = InX;
 	Y = InY;
-	Mesh = InMesh;
-	ZOrder = 5;
 
-	R = 255;
-	G = 0;
-	B = 0;
+	SpriteComponent = CreateDefaultSubobject<USpriteComponent>("Sprite");
 
-	Resource TempResource = GEngine->GetResourceManager()->LoadTexture("Data/monster.bmp",true, 255,255,255);
-	Image = TempResource.Image;
-	Texture = TempResource.Texture;
+	Resource TempResource = GEngine->GetResourceManager()->LoadTexture("Data/monster.bmp", true, 255, 255, 255);
+	SpriteComponent->Image = TempResource.Image;
+	SpriteComponent->Texture = TempResource.Texture;
+	SpriteComponent->ZOrder = 10;
+
+	CollisionComponent = CreateDefaultSubobject<UCollisionComponent>("Collision");
+	CollisionComponent->bIsGenerateOverlap = true;
+	CollisionComponent->bIsGenerateHit = false;
 }
 
 AMonster::~AMonster()
@@ -38,21 +42,21 @@ void AMonster::Tick()
 	else
 	{
 		int Direction = RandDirection(RandomGenerator);
-		if (Direction == 0)
+		if (Direction == 0 && PredictMove(X, Y - 1))
 		{
 			Y--;
 		}
-		if (Direction == 1)
+		if (Direction == 1 && PredictMove(X, Y + 1))
 		{
 			Y++;
 
 		}
-		if (Direction == 2)
+		if (Direction == 2 && PredictMove(X - 1, Y))
 		{
 			X--;
 
 		}
-		if (Direction == 3)
+		if (Direction == 3 && PredictMove(X + 1, Y))
 		{
 			X++;
 

@@ -1,27 +1,59 @@
 #include "Player.h"
 #include "Engine.h"
 #include "ResourceManager.h"
+#include "SpriteAnimationComponent.h"
+#include "CollisionComponent.h"
+#include "World.h"
+#include "Goal.h"
+#include "MyGM.h"
+#include "Monster.h"
+#include "GameplayStatics.h"
 
 APlayer::APlayer(int InX, int InY, char InMesh)
 {
 	X = InX;
 	Y = InY;
-	Mesh = InMesh;
-	ZOrder = 10;
 
-	R = 0;
-	G = 0;
-	B = 255;
+	SpriteAnimationComponent = CreateDefaultSubobject<USpriteAnimationComponent>("Sprite");
 
-	AnimY = 3;
+	Resource TempResource = GEngine->GetResourceManager()->LoadTexture("Data/player.bmp", true, 255, 0, 255);
+	SpriteAnimationComponent->Image = TempResource.Image;
+	SpriteAnimationComponent->Texture = TempResource.Texture;
+	SpriteAnimationComponent->ZOrder = 50;
 
-	Resource TempResource = GEngine->GetResourceManager()->LoadTexture("Data/Player.bmp", true, 255,0,255);
-	Image = TempResource.Image;
-	Texture = TempResource.Texture;
+	CollisionComponent = CreateDefaultSubobject<UCollisionComponent>("Collision");
+	CollisionComponent->bIsGenerateOverlap = true;
+	CollisionComponent->bIsGenerateHit = true;
 }
 
 APlayer::~APlayer()
 {
+}
+
+void APlayer::BeginPlay()
+{
+	__super::BeginPlay();
+	OnActorBeginOverlap = [&](AActor* Other) -> void {
+		AGoal* Goal = dynamic_cast<AGoal*>(Other);
+		if (Goal)
+		{
+			AMyGM* GM = dynamic_cast<AMyGM*>(UGameplayStatics::GetGameMode());
+			if (GM)
+			{
+				GM->GameComplete();
+			}
+		}
+
+		AMonster* Monster = dynamic_cast<AMonster*>(Other);
+		if (Monster)
+		{
+			AMyGM* GM = dynamic_cast<AMyGM*>(UGameplayStatics::GetGameMode());
+			if (GM)
+			{
+				GM->GameOver();
+			}
+		}
+		};
 }
 
 void APlayer::Tick()
@@ -33,50 +65,43 @@ void APlayer::Tick()
 	if (Event.type == SDL_KEYDOWN)
 	{
 		SDL_Keycode KeyCode = Event.key.keysym.sym;
-		if (KeyCode == SDLK_w)
+		if (KeyCode == SDLK_w && PredictMove(X,Y-1))
 		{
 			Y--;
-			AnimY = 2;
+			SpriteAnimationComponent->SpriteIndexY = 2;
+			SpriteAnimationComponent->SpriteIndexX = 0;
 		}
-		if (KeyCode == SDLK_s)
+		if (KeyCode == SDLK_s && PredictMove(X, Y+1))
 		{
 			Y++;
-			AnimY = 3;
+			SpriteAnimationComponent->SpriteIndexY = 3;
+			SpriteAnimationComponent->SpriteIndexX = 0;
 		}
-		if (KeyCode == SDLK_a)
+		if (KeyCode == SDLK_a && PredictMove(X-1, Y))
 		{
 			X--;
-			AnimY = 0;
+			SpriteAnimationComponent->SpriteIndexY = 0;
+			SpriteAnimationComponent->SpriteIndexX = 0;
 		}
-		if (KeyCode == SDLK_d)
+		if (KeyCode == SDLK_d && PredictMove(X+1, Y))
 		{
 			X++;
-			AnimY = 1;
+			SpriteAnimationComponent->SpriteIndexY = 1;
+			SpriteAnimationComponent->SpriteIndexX = 0;
 		}
 		if (KeyCode == SDLK_SPACE)
 		{
 			GEngine->Stop();
 		}
-	}
-
-	if (CurrentTime < 0.2)
-	{
-		CurrentTime += GEngine->GetDeltaSeconds();
-	}
-	else
-	{
-		AnimX = (AnimX + 1) % 5;
-		CurrentTime = 0;
-	}
-	
+	}	
 }
 
-void APlayer::Render()
+void APlayer::ReceiveHit(AActor* Other)
 {
-	int TileSize = 30;
-	int W = Image->w/5;
-	int H = Image->h/5;
-	SDL_Rect SourceRect = { W * AnimX ,H * AnimY, W, H};
-	SDL_Rect DestinationRect = { X * TileSize, Y * TileSize, TileSize, TileSize };
-	SDL_RenderCopy(GEngine->GetRenderer(), Texture, &SourceRect, &DestinationRect);
+
+}
+
+void APlayer::ProcessBeginOverlap(AActor* OtherActor)
+{
+
 }
