@@ -1,5 +1,11 @@
 #include "MyGM.h"
 #include "SDL.h"
+#include "Engine.h"
+#include "World.h"
+#include "YouDieActor.h"
+#include "RenderableComponent.h"
+#include "TextRenderActor.h"
+#include "TextRenderComponent.h"
 
 AMyGM::AMyGM()
 {
@@ -16,6 +22,13 @@ void AMyGM::GameOver()
 
 	if (!bGameOver)
 	{
+		AYouDieActor* TextActor = dynamic_cast<AYouDieActor*>(GEngine->GetWorld()->GetActorOfClass<AYouDieActor>());
+
+		if (TextActor)
+		{
+			TextActor->TextRenderComponent->bIsVisible = true;
+		}
+
 		SDL_Log("Game Over");
 		bGameOver = true;
 	}

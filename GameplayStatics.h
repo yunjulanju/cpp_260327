@@ -15,7 +15,7 @@ public:
 	{
 		return GEngine->GetDeltaSeconds();
 	}
-	
+
 	static AGameMode* GetGameMode();
 };
 

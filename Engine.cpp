@@ -2,7 +2,10 @@
 #include "World.h"
 #include <conio.h>
 #include <SDL.h>
+#include "SDL_ttf.h"
+#include "SDL_mixer.h"
 #include "ResourceManager.h"
+#include "AudioComponent.h"
 
 UEngine* UEngine::Instance = nullptr;
 
@@ -23,7 +26,16 @@ void UEngine::Init()
 	MyWindow = SDL_CreateWindow("Hello", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
 	MyRenderer = SDL_CreateRenderer(MyWindow, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 
+	int frequency = 44100;
+	Uint16 format = MIX_DEFAULT_FORMAT;
+	int channels = 2;
+
+	//int open = Mix_OpenAudioDevice(44100, MIX_DEFAULT_FORMAT, 2, 2048, NULL, 0);
+	int quer = Mix_QuerySpec(&frequency, &format, &channels);
+	int succes = Mix_OpenAudio(frequency, format, channels, 2048); //mix 초기화
+
 	TTF_Init(); //ttf 초기화
+	Font = TTF_OpenFont("./Data/font.ttf", 32);
 
 	ResourceManager = new UResourceManager();
 	bIsRunning = true;
@@ -33,6 +45,13 @@ void UEngine::Init()
 
 void UEngine::Term()
 {
+	Mix_CloseAudio();
+
+	//font도 resource니 resourcemanager로 옮겨야 함.
+	if (Font)
+	{
+		TTF_CloseFont(Font);
+	}
 	TTF_Quit(); //ttf 끄기
 
 	SDL_DestroyRenderer(MyRenderer);

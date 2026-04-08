@@ -89,6 +89,8 @@ public:
 		return World;
 	}
 
+	TTF_Font* Font; //원래는 get,set하는게 좋음ㅎ
+
 protected:
 	void Input();
 	void Tick();

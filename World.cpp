@@ -12,6 +12,8 @@
 #include "Engine.h"
 #include "SpriteComponent.h"
 #include "GameMode.h"
+#include "YouDieActor.h"
+#include "BGActor.h"
 
 using namespace std;
 
@@ -56,11 +58,10 @@ void UWorld::Render()
 	//모든 액터중에서 Render가능한 컴포넌트가 있으면 렌더 하세요.
 	for (auto Actor : Actors)
 	{
-		//가진 컴포넌트중에 SpriteRenderComponent가 있냐 물어보는거임?
 		for (auto Component : Actor->Components)
 		{
-			USpriteComponent* RenderComponent = dynamic_cast<USpriteComponent*>(Component);
-			if (RenderComponent)
+			IRenderableComponent* RenderComponent = dynamic_cast<IRenderableComponent*>(Component);
+			if (RenderComponent && RenderComponent->bIsVisible)
 			{
 				RenderComponent->Render();
 			}
@@ -123,25 +124,28 @@ void UWorld::Load(std::string MapName)
 
 	SDL_SetWindowSize(GEngine->GetWindow(), (MaxX+1) * 30, MaxY * 30);
 	
+	//map에서 추가해야 함.
+	SpawnActor<AYouDieActor>();
+	SpawnActor<ABGActor>();
 
 	//Sort()를 알고리즘에 있는 함수로 쓴다면
 	std::sort(Actors.begin(), Actors.end(),
 		[](AActor* First, AActor* Second) -> int {
 
-			USpriteComponent* FirstRenderComponet = nullptr;
+			IRenderableComponent* FirstRenderComponet = nullptr;
 			for (auto Component : First->Components)
 			{
-				FirstRenderComponet = dynamic_cast<USpriteComponent*>(Component);
+				FirstRenderComponet = dynamic_cast<IRenderableComponent*>(Component);
 				if (FirstRenderComponet)
 				{
 					break;
 				}
 			}
 
-			USpriteComponent* SecondRenderComponet = nullptr;
+			IRenderableComponent* SecondRenderComponet = nullptr;
 			for (auto Component : Second->Components)
 			{
-				SecondRenderComponet = dynamic_cast<USpriteComponent*>(Component);
+				SecondRenderComponet = dynamic_cast<IRenderableComponent*>(Component);
 				if (SecondRenderComponet)
 				{
 					break;
