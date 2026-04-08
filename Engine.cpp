@@ -30,7 +30,7 @@ void UEngine::Init()
 	Uint16 format = MIX_DEFAULT_FORMAT;
 	int channels = 2;
 
-	//int open = Mix_OpenAudioDevice(44100, MIX_DEFAULT_FORMAT, 2, 2048, NULL, 0);
+	int open = Mix_OpenAudioDevice(44100, MIX_DEFAULT_FORMAT, 2, 2048, NULL, 0);
 	int quer = Mix_QuerySpec(&frequency, &format, &channels);
 	int succes = Mix_OpenAudio(frequency, format, channels, 2048); //mix √ ±‚»≠
 
