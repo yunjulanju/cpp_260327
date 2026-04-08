@@ -1,8 +1,13 @@
 #pragma once
 #include <Windows.h>
 #include "SDL.h"
+#include "SDL_mixer.h"
+#include "SDL_ttf.h"
+
 #pragma comment(lib, "SDL2")
 #pragma comment(lib, "SDL2main")
+#pragma comment(lib, "SDL2_mixer")
+#pragma comment(lib, "SDL2_ttf")
 
 class AActor;
 class UWorld;
